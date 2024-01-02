@@ -3,10 +3,71 @@ import { useTodoStore } from "../../hooks/useTodoStore";
 import { useState } from "react";
 import { shallow } from "zustand/shallow";
 import { useEffect, useRef } from "react";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+const data = [
+  {
+    id: "1",
+    Task: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent.",
+    // Assigned_To: 'Beltran',
+    // Assignee: 'Romona',
+    // Status: 'To-do',
+    // Priority: 'Low',
+    Due_Date: "25-May-2020",
+  },
+  {
+    id: "2",
+    Task: "Fix Styling",
+    // Assigned_To: 'Dave',
+    // Assignee: 'Romona',
+    // Status: 'To-do',
+    // Priority: 'Low',
+    Due_Date: "26-May-2020",
+  },
+  {
+    id: "3",
+    Task: "Handle Door Specs",
+    // Assigned_To: 'Roman',
+    // Assignee: 'Romona',
+    // Status: 'To-do',
+    // Priority: 'Low',
+    Due_Date: "27-May-2020",
+  },
+  {
+    id: "4",
+    Task: "morbi",
+    // Assigned_To: 'Gawen',
+    // Assignee: 'Kai',
+    // Status: 'Done',
+    // Priority: 'High',
+    Due_Date: "23-Aug-2020",
+  },
+  {
+    id: "5",
+    Task: "proin",
+    // Assigned_To: 'Bondon',
+    // Assignee: 'Antoinette',
+    // Status: 'In Progress',
+    // Priority: 'Medium',
+    Due_Date: "05-Jan-2021",
+  },
+];
+const columnList = {
+  "01020825": {
+    title: "Plain",
+    items: data,
+  },
+  "01020826": {
+    title: "Ongoing",
+    items: [],
+  },
+  "01020827": {
+    title: "Done",
+    items: [],
+  },
+};
 
 const TodoList = () => {
-  const [columns, setColumns] = useState(columnsFromBackend);
+  const [columns, setColumns] = useState(columnList);
   const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
     const { source, destination } = result;
@@ -28,6 +89,17 @@ const TodoList = () => {
           items: destItems,
         },
       });
+      // console.log("source.droppableId !== destination.droppableId. columns", {
+      //   ...columns,
+      //   [source.droppableId]: {
+      //     ...sourceColumn,
+      //     items: sourceItems,
+      //   },
+      //   [destination.droppableId]: {
+      //     ...destColumn,
+      //     items: destItems,
+      //   },
+      // });
     } else {
       const column = columns[source.droppableId];
       const copiedItems = [...column.items];
@@ -40,6 +112,13 @@ const TodoList = () => {
           items: copiedItems,
         },
       });
+      // console.log("else", {
+      //   ...columns,
+      //   [source.droppableId]: {
+      //     ...column,
+      //     items: copiedItems,
+      //   },
+      // });
     }
   };
   return (
@@ -47,15 +126,64 @@ const TodoList = () => {
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
-        <Column state="Plan"></Column>
-        <Column state="Ongoing"></Column>
-        <Column state="Complete"></Column>
+        {Object.entries(columns).map(([columnId, column], index) => {
+          return (
+            <Droppable key={columnId} droppableId={columnId}>
+              {(provided, snapshot) => (
+                <div
+                  className="min-w-[180px] h-fit flex flex-col flex-1
+                  rounded-lg border border-gray-200 bg-slate-200 shadow-md
+                dark:border-gray-700 dark:bg-gray-600  w-full p-2"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  <Label className="pb-2">{column.title}</Label>
+                  {column.items.map((item, index) => (
+                    <TaskCard key={item.id} item={item} index={index} />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          );
+        })}
       </DragDropContext>
     </div>
   );
 };
 
 export default TodoList;
+
+const TaskCard = ({ item, index }) => {
+  return (
+    <Draggable draggableId={item.id} index={index}>
+      {(provided) => (
+        <div
+          className="mt-2 h-fit flex flex-col flex-1
+          rounded-lg border border-gray-200 bg-slate-50 shadow-md
+      dark:border-gray-700 dark:bg-gray-500  w-full p-2"
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          <div>
+            <p>{item.Task}</p>
+            <div className="secondary-details">
+              {/* <p>
+                <span>
+                  {new Date(item.Due_Date).toLocaleDateString("en-us", {
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </span>
+              </p> */}
+            </div>
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+};
 
 const Column = ({ state }) => {
   const [text, setText] = useState("");
@@ -97,7 +225,7 @@ const Column = ({ state }) => {
   }, [newCard]);
   return (
     <div
-      className="min-w-[180px] h-fit flex flex-col flex-1 
+      className="min-w-[180px] h-fit flex flex-col flex-1
     rounded-lg border border-gray-200 bg-slate-200 shadow-md
   dark:border-gray-700 dark:bg-gray-600  w-full p-2"
     >
@@ -107,7 +235,7 @@ const Column = ({ state }) => {
         {tasks.map((task, i) => (
           <div
             key={i}
-            className="mt-2 h-fit flex flex-col flex-1 
+            className="mt-2 h-fit flex flex-col flex-1
           rounded-lg border border-gray-200 bg-slate-50 shadow-md
         dark:border-gray-700 dark:bg-gray-500  w-full p-2"
           >
@@ -118,7 +246,7 @@ const Column = ({ state }) => {
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
                 className="m-2 text-gray-900 dark:text-white border-0
-          border-gray-400 w-full bg-transparent text-sm focus:outline-none 
+          border-gray-400 w-full bg-transparent text-sm focus:outline-none
           focus:ring-0"
               />
             </div>
@@ -126,7 +254,7 @@ const Column = ({ state }) => {
         ))}
         {newCard && (
           <div
-            className="mt-2 h-fit flex flex-col flex-1 
+            className="mt-2 h-fit flex flex-col flex-1
           rounded-lg border border-gray-200 bg-white shadow-md
         dark:border-gray-700 dark:bg-gray-600  w-full p-2"
           >
@@ -137,7 +265,7 @@ const Column = ({ state }) => {
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
                 className="m-2 text-gray-900 dark:text-white border-0
-          border-gray-400 w-full bg-transparent text-sm focus:outline-none 
+          border-gray-400 w-full bg-transparent text-sm focus:outline-none
           focus:ring-0"
               />
             </div>
