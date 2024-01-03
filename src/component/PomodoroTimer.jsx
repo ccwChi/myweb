@@ -31,32 +31,40 @@ const PomodoroTimer = () => {
       timer = setInterval(() => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
+      // console.log("a");
     } else if (time === 0) {
       setIsActive(false);
       showNotification();
-
+      // console.log("b");
       if (isBreaking) {
         setTime(settingData.time);
         setIsBreaking(false);
         setIsActive(true);
+        // console.log("c");
       } else {
         if (autoBreakSwitch && !!loopTime) {
           if (loopTime === 1) {
             setTime(settingData.longBreak);
             setLoopTime(settingData.loopTime);
             setIsBreaking(true);
+            // console.log("d");
           } else {
             setLoopTime((prev) => prev - 1);
             setTime(settingData.shortBreak);
             setIsBreaking(true);
+            // console.log("e");
           }
           setIsActive(true);
-        }
-        if (autoBreakSwitch && !loopTime) {
+          // console.log("f");
+        } else if (autoBreakSwitch && !loopTime) {
           setTime(settingData.shortBreak);
           setIsBreaking(true);
+          setIsActive(true);
+          // console.log("g");
+        } else if (!autoBreakSwitch) {
+          resetTimer();
+          // console.log("h");
         }
-        setIsActive(true);
       }
     }
 

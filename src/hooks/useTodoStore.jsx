@@ -7,9 +7,9 @@ export const useTodoStore = create(
       tasks: [],
       draggedTask: null,
       tasksInOngoing: 0,
-      addTask: (title, state) =>
+      addTask: (title, state, id) =>
         set((useTodoStore) => ({
-          tasks: [...useTodoStore.tasks, { title, state }],
+          tasks: [...useTodoStore.tasks, { title, state, id }],
         })),
       deleteTask: (title) =>
         set((useTodoStore) => ({

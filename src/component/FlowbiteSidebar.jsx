@@ -18,7 +18,7 @@ const FlowbiteSidebar = memo(function FlowbiteSidebar() {
   // console.log("sidebar");
 
   return (
-    <Sidebar className="">
+    <Sidebar className="w-[200px]">
       <PersonelCard />
       <Sidebar.Items className="">
         <Sidebar.ItemGroup>
