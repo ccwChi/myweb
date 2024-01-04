@@ -71,6 +71,8 @@ export default function TodoList() {
   const onDragEnd = (result, columns, setColumns) => {
     if (!result.destination) return;
     const { source, destination } = result;
+    console.log("source", destination,"source", destination)
+    console.log("result",result)
     if (source.droppableId !== destination.droppableId) {
       const sourceColumn = columns[source.droppableId];
       const destColumn = columns[destination.droppableId];

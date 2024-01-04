@@ -15,7 +15,7 @@ export const useTodoStore = create(
         set((useTodoStore) => ({
           tasks: useTodoStore.tasks.filter((task) => task.title !== title),
         })),
-      setDraggedTask: (title) => set({ draggedTask: title }),
+      setDraggedTask: (id) => set({ draggedTask: id }),
       moveTask: (title, state) =>
         set((useTodoStore) => ({
           tasks: useTodoStore.tasks.map((task) =>
