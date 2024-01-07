@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Label } from "flowbite-react";
-import { useTodoStore } from "../../hooks/useTodoStore";
+import { todoStore } from "../../store/todoStore";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import TodoListModal from "./TodoListModal";
 import TodoModal from "./TodoModal";
@@ -19,9 +19,9 @@ const TodoList = React.memo(
       setDeliveryInfo(null);
     };
     // store裡面的函數
-    const tasks = useTodoStore((store) => store.todoData);
-    const addTask = useTodoStore((store) => store.addTask);
-    const moveTask = useTodoStore((store) => store.moveTask);
+    const tasks = todoStore((store) => store.todoData);
+    const addTask = todoStore((store) => store.addTask);
+    const moveTask = todoStore((store) => store.moveTask);
     const onDragEnd = (result) => {
       if (!result.destination) return;
       moveTask(result);

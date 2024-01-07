@@ -2,7 +2,7 @@ import { Button, Modal } from "flowbite-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AlertModal from "../../component/AlertModal";
-import { useTodoStore } from "../../hooks/useTodoStore";
+import { todoStore } from "../../store/todoStore";
 import { FaTrash } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
@@ -27,8 +27,8 @@ const TodoListModal = React.memo(
       formState: { isDirty },
     } = methods;
 
-    const editTask = useTodoStore((store) => store.editTask);
-    const deleteTask = useTodoStore((store) => store.deleteTask);
+    const editTask = todoStore((store) => store.editTask);
+    const deleteTask = todoStore((store) => store.deleteTask);
     useEffect(() => {
       if (deliveryInfo) {
         reset(defaultValues);

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export const useTodoStore = create(
+export const todoStore = create(
   persist(
     (set) => ({
       todoData: {
@@ -124,6 +124,6 @@ export const useTodoStore = create(
         });
       },
     }),
-    { name: "todoStore" }
+    { name: "ccwWeb" }
   )
 );
