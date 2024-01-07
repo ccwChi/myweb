@@ -1,38 +1,144 @@
 import { Button, Modal } from "flowbite-react";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import AlertModal from "../../component/AlertModal";
+import { useTodoStore } from "../../hooks/useTodoStore";
+import { FaTrash } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
-const TodoListModal = ({openModal, setOpenModal, deliveryInfo}) => {
-//   const [openModal, setOpenModal] = useState(false);
+// eslint-disable-next-line react/display-name
+const TodoListModal = React.memo(
+  ({ openModal, onClose, deliveryInfo }) => {
+    const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const [isDeleteAlert, setIsDeleteAlert] = useState(false);
 
-  return (
-    <>
-      <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>{deliveryInfo.title}</Modal.Header>
-        <Modal.Body>
-          <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              With less than a month to go before the European Union enacts new
-              consumer privacy laws for its citizens, companies around the world
-              are updating their terms of service agreements to comply.
-            </p>
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The European Union’s General Data Protection Regulation (G.D.P.R.)
-              goes into effect on May 25 and is meant to ensure a common set of
-              data rights in the European Union. It requires organizations to
-              notify users as soon as possible of high-risk data breaches that
-              could personally affect them.
-            </p>
+    const defaultValues = {
+      title: deliveryInfo ? deliveryInfo.title : "",
+      content: deliveryInfo?.content ? deliveryInfo.content : "",
+    };
+
+    const methods = useForm({
+      defaultValues,
+    });
+    const {
+      handleSubmit,
+      register,
+      reset,
+      formState: { isDirty },
+    } = methods;
+
+    const editTask = useTodoStore((store) => store.editTask);
+    const deleteTask = useTodoStore((store) => store.deleteTask);
+    useEffect(() => {
+      if (deliveryInfo) {
+        reset(defaultValues);
+      }
+    }, [deliveryInfo]);
+
+    const onSubmit = (data) => {
+      editTask(deliveryInfo, data);
+      reset();
+      onClose();
+    };
+
+    const checkDirty = () => {
+      if (isDirty) {
+        setIsAlertOpen(true);
+      } else {
+        onClose();
+      }
+    };
+
+    const handleAlertAgree = () => {
+        
+    }
+    return (
+      <>
+        {deliveryInfo && (
+          <div>
+            {openModal && (
+              <div
+                id="crud-modal"
+                tabIndex="-1"
+                aria-hidden="true"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-70 bg-gray-800"
+                onClick={checkDirty}
+              >
+                <div
+                  className="relative p-4 w-full max-w-md"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  {/* Modal content */}
+                  <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    {/* Modal header */}
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                        {/* {edit === "title" ? ( */}
+                        <input
+                          className="block pt-3 ps-2  w-full text-gray-900 bg-transparent border-0 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          {...register(
+                            "title"
+                            //   , { ref: titleRef }
+                          )}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsDeleteAlert(true);
+                            setIsAlertOpen(true)
+                            deleteTask(deliveryInfo.state, deliveryInfo.id);
+                          }}
+                          className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                          <FaTrash />
+                          <span className="sr-only">Close modal</span>
+                        </button>
+                      </div>
+                      {/* Modal body */}
+                      <div className="p-4 md:p-5 space-y-4">
+                        <textarea
+                          id="message"
+                          {...register("content")}
+                          rows="4"
+                          className="block p-2.5 w-full text-sm text-gray-900 bg-inherit rounded-lg border-none border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Leave a comment..."
+                        ></textarea>
+                      </div>
+                      <div className="p-4 md:p-5 flex justify-end">
+                        <button
+                          type="submit"
+                          className="px-5 py-2.5 text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                          onClick={() => {
+                            console.log(new Date());
+                          }}
+                        >
+                          確定
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => setOpenModal(false)}>I accept</Button>
-          <Button color="gray" onClick={() => setOpenModal(false)}>
-            Decline
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
-};
+        )}
+        <AlertModal
+          isAlertOpen={isAlertOpen}
+          setIsAlertOpen={setIsAlertOpen}
+          agreeAction={isDeleteAlert? handleAlertAgree : onClose}
+        />
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    // 比較 prevProps 和 nextProps，返回 true 表示組件不需要重新渲染
+    return (
+      prevProps.openModal === nextProps.openModal &&
+      prevProps.deliveryInfo === nextProps.deliveryInfo
+    );
+  }
+);
 
 export default TodoListModal;

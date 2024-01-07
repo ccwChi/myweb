@@ -9,9 +9,15 @@ export const useTodoStore = create(
         ongoing: { id: "3333", label: "進行中", data: [] },
         completion: { id: "4444", label: "完成", data: [] },
       },
-      addTask: (title, columnName, id) =>
+      addTask: (title, columnName) =>
         set((store) => {
-          const newTask = { title, id };
+          const newTask = {
+            title,
+            id: Date.now().toString(),
+            createTime: new Date(),
+            startTime: columnName === "ongoing" ? new Date() : "",
+            completionTime: columnName === "completion" ? new Date() : "",
+          };
           switch (columnName) {
             case "plan":
               return {
@@ -58,6 +64,16 @@ export const useTodoStore = create(
           const sourceTasks = tasks[sourceColumn].data;
           const destTasks = tasks[destColumn].data;
           const removed = sourceTasks.splice(source.index, 1);
+          console.log(removed);
+          if (destination.droppableId === "2222") {
+            removed[0].startTime = "";
+            removed[0].completionTime = "";
+          } else if (destination.droppableId === "3333") {
+            removed[0].startTime = new Date();
+            removed[0].completionTime = "";
+          } else if (destination.droppableId === "4444") {
+            removed[0].completionTime = new Date();
+          }
           destTasks.splice(destination.index, 0, ...removed);
           return {
             todoData: {
@@ -73,6 +89,40 @@ export const useTodoStore = create(
             },
           };
         }),
+      editTask: (taskData, editData) => {
+        set((store) => {
+          const editTaskColumn = taskData.state;
+          return {
+            todoData: {
+              ...store.todoData,
+              [editTaskColumn]: {
+                ...store.todoData[editTaskColumn],
+                data: [
+                  ...store.todoData[editTaskColumn].data.map((task) => {
+                    if (task.id === taskData.id) {
+                      return {
+                        ...task,
+                        title: editData.title, // 更改 title
+                        content: editData.content, // 新增 content
+                      };
+                    } else {
+                      return task;
+                    }
+                  }),
+                ],
+              },
+            },
+          };
+        });
+      },
+      deleteTask: (taskState, taskId) => {
+        set((store) => {
+          const deleteIndex = store.todoData[taskState].data.findIndex(
+            (task) => task.id === taskId
+          );
+          return store.todoData[taskState].data.splice(deleteIndex, 1);
+        });
+      },
     }),
     { name: "todoStore" }
   )
