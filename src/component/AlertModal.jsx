@@ -18,7 +18,7 @@ const AlertModal = React.memo(
           <Modal
             show={isAlertOpen}
             size="sm"
-            onClose={() => setIsAlertOpen(false)}
+            // onClose={onClose}
             popup
             position={"center"}
             className="items-center justify-center"
@@ -34,13 +34,17 @@ const AlertModal = React.memo(
                   <Button
                     color="failure"
                     onClick={() => {
-                      agreeAction;
-                      onClose();
+                      agreeAction();
                     }}
                   >
                     確定
                   </Button>
-                  <Button color="gray" onClick={() => setIsAlertOpen(false)}>
+                  <Button
+                    color="gray"
+                    onClick={() => {
+                      setIsAlertOpen(false);
+                    }}
+                  >
                     返回
                   </Button>
                 </div>

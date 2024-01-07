@@ -10,7 +10,7 @@ import { IoClose } from "react-icons/io5";
 const TodoListModal = React.memo(
   ({ openModal, onClose, deliveryInfo }) => {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
-    const [isDeleteAlert, setIsDeleteAlert] = useState(false);
+    const [deleteInfo, setDeleteInfo] = useState([]);
 
     const defaultValues = {
       title: deliveryInfo ? deliveryInfo.title : "",
@@ -49,9 +49,15 @@ const TodoListModal = React.memo(
       }
     };
 
-    const handleAlertAgree = () => {
-        
-    }
+    const handleAgree = () => {
+      if (deleteInfo.length > 0) {
+        deleteTask(deleteInfo[0], deleteInfo[1]);
+        setDeleteInfo([]);
+      }
+      setIsAlertOpen(false);
+      onClose();
+    };
+
     return (
       <>
         {deliveryInfo && (
@@ -62,7 +68,10 @@ const TodoListModal = React.memo(
                 tabIndex="-1"
                 aria-hidden="true"
                 className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-70 bg-gray-800"
-                onClick={checkDirty}
+                onClick={() => {
+                  checkDirty();
+                  setDeleteInfo([]);
+                }}
               >
                 <div
                   className="relative p-4 w-full max-w-md"
@@ -86,9 +95,11 @@ const TodoListModal = React.memo(
                         <button
                           type="button"
                           onClick={() => {
-                            setIsDeleteAlert(true);
-                            setIsAlertOpen(true)
-                            deleteTask(deliveryInfo.state, deliveryInfo.id);
+                            setDeleteInfo([
+                              deliveryInfo.state,
+                              deliveryInfo.id,
+                            ]);
+                            setIsAlertOpen(true);
                           }}
                           className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
@@ -127,7 +138,8 @@ const TodoListModal = React.memo(
         <AlertModal
           isAlertOpen={isAlertOpen}
           setIsAlertOpen={setIsAlertOpen}
-          agreeAction={isDeleteAlert? handleAlertAgree : onClose}
+          agreeAction={handleAgree}
+          content={deleteInfo.length > 0 ? "確定刪除?" : undefined}
         />
       </>
     );
