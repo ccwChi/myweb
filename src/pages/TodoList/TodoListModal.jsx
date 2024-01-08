@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Button, Modal } from "flowbite-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -121,9 +122,6 @@ const TodoListModal = React.memo(
                         <button
                           type="submit"
                           className="px-5 py-2.5 text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          onClick={() => {
-                            console.log(new Date());
-                          }}
                         >
                           確定
                         </button>

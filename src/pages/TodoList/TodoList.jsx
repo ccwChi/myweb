@@ -4,6 +4,7 @@ import { todoStore } from "../../store/todoStore";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import TodoListModal from "./TodoListModal";
 import TodoModal from "./TodoModal";
+import { useMoveTask } from "../../useFn/useTodoFn";
 
 // eslint-disable-next-line react/display-name
 const TodoList = React.memo(
@@ -20,11 +21,12 @@ const TodoList = React.memo(
     };
     // store裡面的函數
     const tasks = todoStore((store) => store.todoData);
+    // console.log(tasks);
     const addTask = todoStore((store) => store.addTask);
     const moveTask = todoStore((store) => store.moveTask);
     const onDragEnd = (result) => {
       if (!result.destination) return;
-      moveTask(result);
+      moveTask(useMoveTask(result));
     };
 
     // ↓↓處理遺失焦點後新建卡片的處理

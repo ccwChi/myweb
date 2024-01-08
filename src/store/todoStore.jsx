@@ -51,30 +51,8 @@ export const todoStore = create(
               };
           }
         }),
-      moveTask: (result) =>
+      moveTask: (sourceColumn, sourceTasks, destColumn, destTasks) =>
         set((store) => {
-          const tasks = store.todoData;
-          const { source, destination } = result;
-          const sourceColumn = Object.keys(tasks).find(
-            (key) => tasks[key].id.toString() === source.droppableId
-          );
-          const destColumn = Object.keys(tasks).find(
-            (key) => tasks[key].id.toString() === destination.droppableId
-          );
-          const sourceTasks = tasks[sourceColumn].data;
-          const destTasks = tasks[destColumn].data;
-          const removed = sourceTasks.splice(source.index, 1);
-          console.log(removed);
-          if (destination.droppableId === "2222") {
-            removed[0].startTime = "";
-            removed[0].completionTime = "";
-          } else if (destination.droppableId === "3333") {
-            removed[0].startTime = new Date();
-            removed[0].completionTime = "";
-          } else if (destination.droppableId === "4444") {
-            removed[0].completionTime = new Date();
-          }
-          destTasks.splice(destination.index, 0, ...removed);
           return {
             todoData: {
               ...store.todoData,
