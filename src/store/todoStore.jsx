@@ -5,78 +5,127 @@ export const todoStore = create(
   persist(
     (set) => ({
       todoData: {
-        plan: { id: "2222", label: "待辦", data: [] },
-        ongoing: { id: "3333", label: "進行中", data: [] },
-        completion: { id: "4444", label: "完成", data: [] },
+        741741: { title: "todo", data: [] },
+        852852: { title: "ongoing", data: [] },
+        963963: { title: "finish", data: [] },
       },
-      addTask: (title, columnName) =>
+      addTask: (title, columnId) =>
         set((store) => {
           const newTask = {
             title,
             id: Date.now().toString(),
             createTime: new Date(),
-            startTime: columnName === "ongoing" ? new Date() : "",
-            completionTime: columnName === "completion" ? new Date() : "",
+            startTime: columnId === "852852" ? new Date() : "",
+            completionTime: columnId === "963963" ? new Date() : "",
           };
-          switch (columnName) {
-            case "plan":
+          switch (columnId) {
+            case "741741":
               return {
                 todoData: {
                   ...store.todoData,
-                  plan: {
-                    ...store.todoData.plan,
-                    data: [...store.todoData.plan.data, newTask],
+                  741741: {
+                    ...store.todoData[741741],
+                    data: [...store.todoData[741741].data, newTask],
                   },
                 },
               };
-            case "ongoing":
+            case "852852":
               return {
                 todoData: {
                   ...store.todoData,
-                  ongoing: {
-                    ...store.todoData.ongoing,
-                    data: [...store.todoData.ongoing.data, newTask],
+                  852852: {
+                    ...store.todoData[852852],
+                    data: [...store.todoData[852852].data, newTask],
                   },
                 },
               };
-            case "completion":
+            case "963963":
               return {
                 todoData: {
                   ...store.todoData,
-                  completion: {
-                    ...store.todoData.completion,
-                    data: [...store.todoData.completion.data, newTask],
+                  963963: {
+                    ...store.todoData[963963],
+                    data: [...store.todoData[963963].data, newTask],
                   },
                 },
               };
           }
         }),
-      moveTask: (sourceColumn, sourceTasks, destColumn, destTasks) =>
+      moveTask: (result) => {
         set((store) => {
-          return {
-            todoData: {
-              ...store.todoData,
-              [sourceColumn]: {
-                ...store.todoData[sourceColumn],
-                data: sourceTasks,
+          const tasks = store.todoData;
+          const { source, destination, draggableId } = result;
+          if (source.droppableId !== destination.droppableId) {
+            const sourceColumn = tasks[source.droppableId];
+            const destColumn = tasks[destination.droppableId];
+            const sourceItems = [...sourceColumn.data];
+            const destItems = [...destColumn.data];
+            const [removed] = sourceItems.splice(
+              sourceItems.findIndex((task) => task.id === draggableId),
+              1
+            );
+            if (destination.droppableId === "741741") {
+              removed.startTime = "";
+              removed.completionTime = "";
+            } else if (destination.droppableId === "852852") {
+              removed.startTime = new Date();
+              removed.completionTime = "";
+            } else if (destination.droppableId === "963963") {
+              removed.completionTime = new Date();
+            }
+            destItems.splice(destination.index, 0, removed);
+            return {
+              todoData: {
+                ...tasks,
+                [source.droppableId]: {
+                  ...sourceColumn,
+                  data: sourceItems,
+                },
+                [destination.droppableId]: {
+                  ...destColumn,
+                  data: destItems,
+                },
               },
-              [destColumn]: {
-                ...store.todoData[destColumn],
-                data: destTasks,
+            };
+          } else {
+            const column = tasks[source.droppableId];
+            const copiedItems = [...column.data];
+            const [removed] = copiedItems.splice(
+              copiedItems.findIndex((task) => task.id === draggableId),
+              1
+            );
+            if (destination.droppableId === "741741") {
+              removed.startTime = "";
+              removed.completionTime = "";
+            } else if (destination.droppableId === "852852") {
+              removed.startTime = new Date();
+              removed.completionTime = "";
+            } else if (destination.droppableId === "963963") {
+              removed.completionTime = new Date();
+            }
+            copiedItems.splice(destination.index, 0, removed);
+            return {
+              todoData: {
+                ...tasks,
+                [source.droppableId]: {
+                  ...column,
+                  data: copiedItems,
+                },
               },
-            },
-          };
-        }),
+            };
+          }
+        });
+      },
       editTask: (taskData, editData) => {
         set((store) => {
-          const editTaskColumn = taskData.state;
+          const columnId = taskData.columnId;
           return {
             todoData: {
               ...store.todoData,
-              [editTaskColumn]: {
-                ...store.todoData[editTaskColumn],
+              [columnId]: {
+                ...store.todoData[columnId],
                 data: [
-                  ...store.todoData[editTaskColumn].data.map((task) => {
+                  ...store.todoData[columnId].data.map((task) => {
                     if (task.id === taskData.id) {
                       return {
                         ...task,
@@ -93,12 +142,12 @@ export const todoStore = create(
           };
         });
       },
-      deleteTask: (taskState, taskId) => {
+      deleteTask: (columnId, taskId) => {
         set((store) => {
-          const deleteIndex = store.todoData[taskState].data.findIndex(
+          const deleteIndex = store.todoData[columnId].data.findIndex(
             (task) => task.id === taskId
           );
-          return store.todoData[taskState].data.splice(deleteIndex, 1);
+          return store.todoData[columnId].data.splice(deleteIndex, 1);
         });
       },
     }),

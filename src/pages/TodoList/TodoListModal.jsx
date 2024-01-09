@@ -30,6 +30,7 @@ const TodoListModal = React.memo(
 
     const editTask = todoStore((store) => store.editTask);
     const deleteTask = todoStore((store) => store.deleteTask);
+
     useEffect(() => {
       if (deliveryInfo) {
         reset(defaultValues);
@@ -37,6 +38,7 @@ const TodoListModal = React.memo(
     }, [deliveryInfo]);
 
     const onSubmit = (data) => {
+      console.log(deliveryInfo, "sasa", data);
       editTask(deliveryInfo, data);
       reset();
       onClose();
@@ -97,7 +99,7 @@ const TodoListModal = React.memo(
                           type="button"
                           onClick={() => {
                             setDeleteInfo([
-                              deliveryInfo.state,
+                              deliveryInfo.columnId,
                               deliveryInfo.id,
                             ]);
                             setIsAlertOpen(true);

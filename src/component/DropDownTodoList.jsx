@@ -11,15 +11,17 @@ const DropdownTodoList = React.memo(() => {
   const [checkedIdList, setCheckedIdList] = useState([]);
   const dropdownRef = useRef(null);
 
-  const { handleSubmit, register, reset } = useForm();
+  const { handleSubmit, register, reset } = useForm({
+    title: "",
+  });
 
   const allTask = todoStore((store) => store.todoData);
-  const tasks = allTask.ongoing.data;
+  const goingTask = allTask[852852].data;
   const addTask = todoStore((store) => store.addTask);
   const moveTask = todoStore((store) => store.moveTask);
 
   useEffect(() => {
-    setCheckedList(Array(tasks.length).fill(false));
+    setCheckedList(Array(goingTask.length).fill(false));
   }, [allTask]);
 
   const handleCheckboxChange = (index, taskId) => {
@@ -59,10 +61,10 @@ const DropdownTodoList = React.memo(() => {
         return {
           draggableId: checked[1],
           source: {
-            droppableId: "3333",
+            droppableId: "852852",
           },
           destination: {
-            droppableId: "4444",
+            droppableId: "963963",
           },
         };
       });
@@ -78,7 +80,7 @@ const DropdownTodoList = React.memo(() => {
   };
   const onSubmit = (data) => {
     console.log(data);
-    addTask(data.title, "ongoing");
+    addTask(data.title, "852852");
     reset();
   };
 
@@ -104,7 +106,7 @@ const DropdownTodoList = React.memo(() => {
               className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200 "
               aria-labelledby="dropdownBgHoverButton"
             >
-              {tasks.map((task, index) => {
+              {goingTask.map((task, index) => {
                 return (
                   <React.Fragment key={task.id}>
                     <li>
@@ -128,7 +130,8 @@ const DropdownTodoList = React.memo(() => {
                 <div className="flex justify-around items-center">
                   <input
                     className="w-[120px] text-gray-900 ps-2 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
-                    {...register("title")}
+                    {...register("title", { required: true })}
+                    defaultValue=""
                   />
                   <Button type="submit" className=" !bg-transparent">
                     <FaPlus className=" cursor-pointer " size={8} />

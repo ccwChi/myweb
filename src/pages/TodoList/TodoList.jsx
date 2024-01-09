@@ -4,7 +4,6 @@ import { todoStore } from "../../store/todoStore";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import TodoListModal from "./TodoListModal";
 import TodoModal from "./TodoModal";
-import { useMoveTask } from "../../useFn/useTodoFn";
 
 // eslint-disable-next-line react/display-name
 const TodoList = React.memo(
@@ -21,12 +20,11 @@ const TodoList = React.memo(
     };
     // store裡面的函數
     const tasks = todoStore((store) => store.todoData);
-    // console.log(tasks);
     const addTask = todoStore((store) => store.addTask);
     const moveTask = todoStore((store) => store.moveTask);
     const onDragEnd = (result) => {
       if (!result.destination) return;
-      moveTask(useMoveTask(result));
+      moveTask(result);
     };
 
     // ↓↓處理遺失焦點後新建卡片的處理
@@ -36,9 +34,9 @@ const TodoList = React.memo(
       setText(e.target.value);
     };
 
-    const handleInputBlur = (columnName) => {
+    const handleInputBlur = (columnId) => {
       if (text.trim()) {
-        addTask(text, columnName);
+        addTask(text, columnId);
         setText("");
       }
       setNewCard(false);
@@ -53,9 +51,9 @@ const TodoList = React.memo(
       <>
         <div className="flex flex-1 p-4 gap-4 overflow-x-auto">
           <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-            {Object.entries(tasks).map(([columnName, column]) => {
+            {Object.entries(tasks).map(([columnId, column]) => {
               return (
-                <Droppable key={column.id} droppableId={column.id.toString()}>
+                <Droppable key={columnId} droppableId={columnId}>
                   {(provided, snapshot) => (
                     <div
                       className="min-w-[180px] h-fit flex flex-col flex-1 rounded-lg border border-gray-200 bg-slate-200 shadow-md dark:border-gray-700 dark:bg-gray-600  w-full p-2"
@@ -63,12 +61,12 @@ const TodoList = React.memo(
                       {...provided.droppableProps}
                       // onClick={() => console.log(column)}
                     >
-                      <Label className="pb-2">{column.label}</Label>
+                      <Label className="pb-2">{column.title}</Label>
                       {column.data.map((task, index) => (
                         <Draggable
                           draggableId={task.id}
                           index={index}
-                          key={index}
+                          key={task.id}
                         >
                           {(provided) => (
                             <div
@@ -76,10 +74,13 @@ const TodoList = React.memo(
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              onClick={(e) => {
-                                e.preventDefault();
+                              onClick={() => {
                                 setOpenModal(true);
-                                setDeliveryInfo({ ...task, state: columnName });
+                                setDeliveryInfo({
+                                  ...task,
+                                  columnId,
+                                });
+                                console.log("click點擊卡片", task);
                               }}
                             >
                               <p>{task.title}</p>
@@ -88,14 +89,14 @@ const TodoList = React.memo(
                         </Draggable>
                       ))}
                       {provided.placeholder}
-                      {newCard === column.id && (
+                      {newCard === columnId && (
                         <div className="mt-2 flex flex-col flex-1 rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-600  w-full p-2">
                           <div className="flex">
                             <input
                               ref={inputRef}
                               value={text}
                               onChange={handleInputChange}
-                              onBlur={() => handleInputBlur(columnName)}
+                              onBlur={() => handleInputBlur(columnId)}
                               className="m-2 text-gray-900 dark:text-white border-0border-gray-400 w-full bg-transparent text-sm focus:outline-none focus:ring-0"
                             />
                           </div>
@@ -103,9 +104,9 @@ const TodoList = React.memo(
                       )}
                       <Button
                         className="my-2 p-0 h-8"
-                        color="inherent"
+                        // color="inherent"
                         onClick={() => {
-                          setNewCard(column.id);
+                          setNewCard(columnId);
                         }}
                       >
                         + 新增

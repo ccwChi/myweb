@@ -1,6 +1,6 @@
 import { todoStore } from "../store/todoStore";
 
-const useMoveTask = (result) => {
+const moveTaskFn = (result) => {
   const tasks = todoStore((store) => store.todoData);
   const { source, destination, draggableId } = result;
   const sourceColumn = Object.keys(tasks).find(
