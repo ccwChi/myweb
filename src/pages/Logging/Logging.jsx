@@ -53,7 +53,7 @@ const Logging = () => {
               </div>
               <div
                 className={`${
-                  state === "login" && "border-b-2"
+                  state === "login" && "border-b-2 "
                 } cursor-pointer`}
                 onClick={() => {
                   setState("login");
