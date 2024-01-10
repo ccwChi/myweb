@@ -17,15 +17,18 @@ const sidebarRoutes = [
   {
     icon: GiTomato,
     label: "ToDo List",
-    href: "/todolist"
+    href: "/todolist",
   },
   {
     icon: GiTomato,
     label: "Test",
-    href: "/test"
-  }
+    href: "/test",
+  },
+  {
+    icon: GiTomato,
+    label: "Logging",
+    href: "/logging",
+  },
 ];
 
 export default sidebarRoutes;
-
-

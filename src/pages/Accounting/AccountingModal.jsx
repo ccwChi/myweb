@@ -1,7 +1,7 @@
 import { Button, Checkbox, Label, Modal, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 
-const AccountingModal = ({openModal}) => {
+const AccountingModal = ({}) => {
   const [openModal, setOpenModal] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -13,11 +13,11 @@ const AccountingModal = ({openModal}) => {
   return (
     <>
       <Button onClick={() => setOpenModal(true)}>Toggle modal</Button>
-      <Modal show={openModal} size="md" onClose={onCloseModal} popup>
+      <Modal show={openModal} size="md" onClose={onCloseModal} popup className="rounded-none">
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">新增開支</h3>
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Your email" />

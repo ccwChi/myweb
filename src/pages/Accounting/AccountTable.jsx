@@ -1,6 +1,7 @@
 import { Table } from "flowbite-react";
 import { demoExpense } from "../../data/expense";
 import React, { useState } from "react";
+import AccountingModal from "./AccountingModal";
 
 const columns = [
   {
@@ -36,8 +37,6 @@ const columns = [
   { id: 6, label: "", value: "edit", width: "20px", color: "" },
 ];
 
-
-
 const AccountTable = () => {
   const [expandedRow, setExpandedRow] = useState(null);
 
@@ -61,7 +60,7 @@ const AccountTable = () => {
               ${i === 5 && "hidden lg:table-cell"}
               ${i === 6 && "w-[10px]"}
               `}
-              >
+            >
               {c.label}
             </Table.HeadCell>
           ))}
@@ -96,7 +95,7 @@ const AccountTable = () => {
                 <Table.Cell
                   className="px-4 py-2
                   flex items-center justify-center"
-                  >
+                >
                   <a
                     href="#"
                     className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
@@ -123,11 +122,9 @@ const AccountTable = () => {
           ))}
         </Table.Body>
       </Table>
+      <AccountingModal />
     </div>
   );
 };
 
 export default AccountTable;
-
-
-
