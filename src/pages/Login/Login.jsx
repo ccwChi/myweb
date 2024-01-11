@@ -1,13 +1,21 @@
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { userStore } from "../../store/userStore";
 
-const Logging = () => {
+const Login = () => {
   const [state, setState] = useState("register");
   const defaultValues = {};
 
+  // const schema = yup.object().shape({
+  //   checkTerm: yup.string().required("部門不得為空白!"),
+  // });
+
   const methods = useForm({
     defaultValues,
+    // resolver: yupResolver(schema),
   });
   const {
     handleSubmit,
@@ -15,9 +23,34 @@ const Logging = () => {
     reset,
     formState: { errors },
   } = methods;
-
+  const loginInform = userStore((store) => store.loginInform);
+  const createAccount = userStore((store) => store.createAccount);
+  const loginAccount = (email, pw) => {
+    if (Object.prototype.hasOwnProperty.call(loginInform, email)) {
+      // 檢查密碼是否相符
+      if (loginInform[email].password === pw) {
+        console.log("Login successful");
+        return true; // 密碼相符，登入成功
+      } else {
+        console.log("Incorrect password");
+      }
+    } else {
+      console.log("Account not found");
+    }
+    return false; // 登入失敗
+  };
   const onSubmit = (data) => {
-    console.log(data);
+    if (state === "register" && data.password === data.checkPassword) {
+      if (Object.prototype.hasOwnProperty.call(loginInform, data.email)) {
+        console.log("已有重複帳號");
+      } else {
+        createAccount(data.email, data.password);
+        reset();
+        setState("login");
+      }
+    } else if (state === "login") {
+      loginAccount(data.email, data.password);
+    }
   };
 
   return (
@@ -111,10 +144,10 @@ const Logging = () => {
                 </div>
                 <div className="flex items-center mb-4">
                   <input
-                    {...register("checkTerm", { require: true })}
+                    {...register("checkTerm")}
                     id="checkbox-1"
                     type="checkbox"
-                    value=""
+                    required
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label
@@ -190,4 +223,4 @@ const Logging = () => {
   );
 };
 
-export default Logging;
+export default Login;

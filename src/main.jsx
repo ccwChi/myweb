@@ -9,7 +9,7 @@ import Index from "./pages/Index/Index";
 import Accounting from "./pages/Accounting/Accounting";
 import TodoList from "./pages/TodoList/TodoList";
 import Test from "./pages/Test/test";
-import Logging from "./pages/Logging/Logging";
+import Login from "./pages/Login/Login";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
   {
     errorElement: <ErrorPage />,
     path: "logging",
-    element: <Logging />,
+    element: <Login />,
   },
 ]);
 
