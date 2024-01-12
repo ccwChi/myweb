@@ -8,8 +8,8 @@ const Header = React.memo(() => {
   return (
     <div className="Header bg-slate-50 w-full h-[4.5rem] flex justify-between border-b-[1px] border-gray-400 dark:bg-gray-800">
       {/* <DropDownTodoList /> */}
-      <Label className=" flex justify-center items-center text-xl font-bold">
-        你的月薪現在只有3.7萬
+      <Label className=" flex justify-center items-center text-xl font-bold ms-6">
+        待辦事項
       </Label>
       <div className="p-2 sm:flex gap-1 rounded-lg items-center hidden ">
         <DropDownTodoList />

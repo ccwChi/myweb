@@ -49,7 +49,7 @@ const TodoList = React.memo(
 
     return (
       <>
-        <div className="flex flex-1 p-4 gap-4 overflow-x-auto">
+        <div className="flex sm:flex-1 p-4 gap-4 overflow-x-auto flex-col sm:flex-row">
           <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
             {Object.entries(tasks).map(([columnId, column]) => {
               return (

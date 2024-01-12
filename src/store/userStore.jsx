@@ -14,6 +14,15 @@ export const userStore = create(
             },
           };
         }),
+      keepLoginState: (account, check) =>
+        set((store) => {
+          return {
+            loginInform: {
+              ...store.loginInform,
+              check,
+            },
+          };
+        }),
       loginAccount: (account, pw) =>
         set((store) => {
           if (
